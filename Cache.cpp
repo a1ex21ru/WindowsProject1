@@ -97,7 +97,7 @@ string CacheInfo::getCacheInfoForAMD() {
                         cacheType = "׃נמגוםü ך‎רא: L1";
                     }
                     else if (buffer[i].Cache.Type == CacheInstruction) {
-                        cacheType = "׃נמגוםü ך‎רא: L1";
+                        cacheType = "׃נמגוםü ך‎רא: L1 ";
                     }
                     break;
                 case 2:
