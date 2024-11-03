@@ -121,7 +121,7 @@ string CacheInfo::getCacheInfoForAMD() {
                         info.type = "Кэш данных";
                     }
                     else if (buffer[i].Cache.Type == CacheInstruction) {
-                        info.type = "Кэш инструкций";
+                        info.type = "Кэш инструкций ";
                     }
                     else {
                         info.type = "Объединённый кэш";
@@ -143,7 +143,7 @@ string CacheInfo::getCacheInfoForAMD() {
                 + "  Размер строки: " + to_string(info.lineSize) + string(" Bytes\n")
                 + "  Уровень путей: " + to_string(info.ways) + string("\n")
                 + "  Количество наборов: " + to_string(info.sets) + string("\n")
-                + string("\n---------------------------\n\n"); // Пустая строка для разделения между кэшами
+                + string("\n\n"); // Пустая строка для разделения между кэшами
         }
     }
     else {
@@ -203,21 +203,27 @@ string CacheInfo::getCacheInfoForIntel() {
         
         // Выводим информацию о текущем уровне кэша
         info += "Уровень кэша: L" + to_string(cacheLevel) + '\n';             // Уровень кэша (L1, L2, L3)
-        info += "Тип кэша: " + cacheTypeStr + '\n';                // Тип кэша (данные, инструкции или объединённый)
-        info += "Размер кэша: " + to_string(cacheSize / 1024) + string(" КБ") + '\n'; // Размер кэша в килобайтах
-        info += "Размер строки кэша: " + to_string(cacheLineSize) + string(" байт") + '\n'; // Размер строки кэша в байтах
-        info += "Количество путей: " + to_string(cacheWays) +'\n';            // Количество путей (associativity)
-        info += "Количество наборов: " + to_string(cacheSets) + '\n';          // Количество наборов
-        info += "\n\n";                                             // Разделитель для визуального удобства
-
-        //std::cout << "Уровень кэша: L" << cacheLevel << std::endl;             // Уровень кэша (L1, L2, L3)
-        //std::cout << "Тип кэша: " << cacheTypeStr << std::endl;                // Тип кэша (данные, инструкции или объединённый)
-        //std::cout << "Размер кэша: " << cacheSize / 1024 << " КБ" << std::endl; // Размер кэша в килобайтах
-        //std::cout << "Размер строки кэша: " << cacheLineSize << " байт" << std::endl; // Размер строки кэша в байтах
-        //std::cout << "Количество путей: " << cacheWays << std::endl;            // Количество путей (associativity)
-        //std::cout << "Количество наборов: " << cacheSets << std::endl;          // Количество наборов
-        //std::cout << "---------------------------" << "\n\n";                // Разделитель для визуального удобства
+        info += "  Тип кэша: " + cacheTypeStr + '\n';                // Тип кэша (данные, инструкции или объединённый)
+        info += "  Размер кэша: " + to_string(cacheSize / 1024) + string(" КБ") + '\n'; // Размер кэша в килобайтах
+        info += "  Размер строки кэша: " + to_string(cacheLineSize) + string(" байт") + '\n'; // Размер строки кэша в байтах
+        info += "  Количество путей: " + to_string(cacheWays) +'\n';            // Количество путей (associativity)
+        info += "  Количество наборов: " + to_string(cacheSets) + '\n';          // Количество наборов
+        info += "\n\n"; 
     }
     return info;
 }
 
+
+std::string ReplaceNewlines(const std::string& input)
+{
+    std::string output;
+    for (char c : input) {
+        if (c == '\n') {
+            output += "\r\n"; // Добавляем \r\n вместо \n
+        }
+        else {
+            output += c;
+        }
+    }
+    return output;
+}

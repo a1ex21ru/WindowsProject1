@@ -69,3 +69,5 @@ private:
     string getCacheInfoForAMD();
 
 };
+
+std::string ReplaceNewlines(const std::string& input);

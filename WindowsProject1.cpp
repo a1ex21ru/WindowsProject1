@@ -94,7 +94,11 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     hInst = hInstance; // Сохранить маркер экземпляра в глобальной переменной
 
     HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+        1100,
+        150,
+        400,
+        700,
+        nullptr, nullptr, hInstance, nullptr);
     
     if (!hWnd)
     {
@@ -114,25 +118,67 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    // Получаем информацию о кэше
+    string cacheInfo = proc.getCacheInfo();
     switch (message)
     {
     case WM_CREATE:
     {
         SetWindowText(hWnd, L"Кэш-память процессора");
         // Создание кнопки
-        HWND hButton = CreateWindow(
-            L"BUTTON",  // Предопределенный класс кнопки
-            L"Получить информацию о кэше", // Текст кнопки
-            WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, // Стиль кнопки
-            50,         // Положение X
-            50,         // Положение Y
-            250,        // Ширина
-            30,         // Высота
-            hWnd,       // Родительское окно
-            NULL,       // Идентификатор кнопки
-            (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), // Дескриптор приложения
-            NULL        // Дополнительные параметры
+        //HWND hButton = CreateWindow(
+        //    L"BUTTON",  // Предопределенный класс кнопки
+        //    L"Получить информацию о кэше", // Текст кнопки
+        //    WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, // Стиль кнопки
+        //    50,         // Положение X
+        //    50,         // Положение Y
+        //    250,        // Ширина
+        //    30,         // Высота
+        //    hWnd,       // Родительское окно
+        //    NULL,       // Идентификатор кнопки
+        //    (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), // Дескриптор приложения
+        //    NULL        // Дополнительные параметры
+        //);
+        // Создание текстового поля
+        HWND hEdit = CreateWindowExW(
+            0,
+            L"EDIT",
+            L"Информация о кэше",
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT,
+            1,
+            1,
+            350,
+            560,
+            hWnd,
+            nullptr,
+            hInst,
+            nullptr
         );
+
+        // Создаем шрифт
+        HFONT hFont = CreateFontW(
+            16,                // Высота шрифта
+            0,                 // Ширина шрифта (0 - автоматически)
+            0,                 // Угол наклона
+            0,                 // Угол наклона
+            FW_MEDIUM,          // Толщина шрифта (FW_BOLD - жирный)
+            FALSE,            // Курсив
+            FALSE,            // Подчеркивание
+            FALSE,            // Зачеркивание
+            DEFAULT_CHARSET,  // Набор символов
+            OUT_DEFAULT_PRECIS, // Прецизионный вывод
+            CLIP_DEFAULT_PRECIS, // Обрезка
+            DEFAULT_QUALITY,  // Качество
+            DEFAULT_QUALITY, // Высокое качество
+            L"Consolas"        // Имя шрифта
+        );
+
+        // Устанавливаем текст в текстовое поле
+        std::string cacheWithR = ReplaceNewlines(cacheInfo);
+        SetWindowTextA(hEdit, cacheWithR.c_str());
+
+        SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
+        
     }
     break;
     case WM_COMMAND:
@@ -148,14 +194,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             DestroyWindow(hWnd);
             break;
         default:
-            if (HIWORD(wParam) == BN_CLICKED) 
-            {
-                // Получаем информацию о кэше
-                string cacheInfo = proc.getCacheInfo();
-                
-                // Отображаем информацию о кэше
-                MessageBoxA(hWnd, cacheInfo.c_str(), "Информация о кэше", MB_OK);
-            }
+
+             
+            // Отображаем информацию о кэше
+            //MessageBoxA(hWnd, cacheInfo.c_str(), "Информация о кэше", MB_OK);
+            
             return DefWindowProc(hWnd, message, wParam, lParam);
         }
     }
@@ -165,8 +208,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hWnd, &ps);
         //HDC hdc = GetDC(hWnd);
-        //TextOutA(hdc, 10, 10, "Текст", wcslen(L"Текст"));
-        //ReleaseDC(hWnd, hdc);
+        //string cacheInfo = proc.getCacheInfo();
+        //TextOutA(hdc, 100, 10, cacheInfo.c_str(), cacheInfo.length());
+        ReleaseDC(hWnd, hdc);
         // TODO: Добавьте сюда любой код прорисовки, использующий HDC...
         EndPaint(hWnd, &ps);
     }
@@ -199,31 +243,3 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     }
     return (INT_PTR)FALSE;
 }
-
-// Функция для получения информации о кэш-памяти
-//std::wstring getCacheInfo() {
-//    int cpuInfo[4];
-//    std::wstring cacheInfo;
-//
-//    // Получаем информацию о процессоре
-//    __cpuid(cpuInfo, 0x0);
-//    if (cpuInfo[0] < 0x0A) {
-//        return L"CPUID не поддерживается.";
-//    }
-//
-//    // Получаем информацию о кэше
-//    for (int i = 0; i < 4; ++i) {
-//        __cpuid(cpuInfo, 0x0A); // Запрос информации о кэше
-//
-//        int cacheType = cpuInfo[0] & 0x1F; // Тип кэша
-//        int cacheLevel = (cpuInfo[0] >> 5) & 0x7; // Уровень кэша
-//        int cacheSize = cpuInfo[2] + 1; // Размер кэша
-//
-//        cacheInfo += L"Кэш " + std::to_wstring(i + 1) + L":\n";
-//        cacheInfo += L"Тип: " + std::to_wstring(cacheType) + L"\n";
-//        cacheInfo += L"Уровень: " + std::to_wstring(cacheLevel) + L"\n";
-//        cacheInfo += L"Размер: " + std::to_wstring(cacheSize * 64) + L" байт\n\n"; // Умножаем на 64 для получения размера в байтах
-//    }
-//
-//    return cacheInfo;
-//}
