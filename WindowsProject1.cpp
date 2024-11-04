@@ -93,6 +93,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     hInst = hInstance; // Сохранить маркер экземпляра в глобальной переменной
 
+    /// Создание окна
     HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
         1100,
         150,
@@ -125,21 +126,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
     {
         SetWindowText(hWnd, L"Кэш-память процессора");
-        // Создание кнопки
-        //HWND hButton = CreateWindow(
-        //    L"BUTTON",  // Предопределенный класс кнопки
-        //    L"Получить информацию о кэше", // Текст кнопки
-        //    WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, // Стиль кнопки
-        //    50,         // Положение X
-        //    50,         // Положение Y
-        //    250,        // Ширина
-        //    30,         // Высота
-        //    hWnd,       // Родительское окно
-        //    NULL,       // Идентификатор кнопки
-        //    (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), // Дескриптор приложения
-        //    NULL        // Дополнительные параметры
-        //);
-        // Создание текстового поля
+
+        /// Создание текстового поля
         HWND hEdit = CreateWindowExW(
             0,
             L"EDIT",
@@ -155,7 +143,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             nullptr
         );
 
-        // Создаем шрифт
+        /// Создаем шрифт
         HFONT hFont = CreateFontW(
             16,                // Высота шрифта
             0,                 // Ширина шрифта (0 - автоматически)
@@ -173,7 +161,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             L"Consolas"        // Имя шрифта
         );
 
-        // Устанавливаем текст в текстовое поле
+        /// Устанавливаем текст в текстовое поле
         std::string cacheWithR = ReplaceNewlines(cacheInfo);
         SetWindowTextA(hEdit, cacheWithR.c_str());
 
