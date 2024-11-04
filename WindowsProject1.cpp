@@ -93,6 +93,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     hInst = hInstance; // Сохранить маркер экземпляра в глобальной переменной
 
+    /// Создание окна
     HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
         1100,
         150,
@@ -124,7 +125,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
     case WM_CREATE:
     {
-        SetWindowText(hWnd, L"CPU Information");
+        SetWindowText(hWnd, L"Кэш-память процессора");
         // Создание кнопки
         //HWND hButton = CreateWindow(
         //    L"BUTTON",  // Предопределенный класс кнопки
@@ -155,7 +156,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             nullptr
         );
 
-        // Создаем шрифт
+        /// Создаем шрифт
         HFONT hFont = CreateFontW(
             16,                // Высота шрифта
             0,                 // Ширина шрифта (0 - автоматически)
@@ -173,7 +174,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             L"Consolas"        // Имя шрифта
         );
 
-        // Устанавливаем текст в текстовое поле
+        /// Устанавливаем текст в текстовое поле
         std::string cacheWithR = ReplaceNewlines(cacheInfo);
         SetWindowTextA(hEdit, cacheWithR.c_str());
 
