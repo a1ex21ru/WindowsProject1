@@ -13,21 +13,15 @@ CacheInfo::~CacheInfo()
 {
 }
 
-string CacheInfo::getCacheInfo()
+void CacheInfo::getCacheInfo(bool CP = 1)
 {
-    string info;
-    info = "Производитель ЦП : " + vendor + '\n';
-    info += "Название ЦП : " + model + "\n\n";
-
     if (vendor == Intel)
     {
-        info += getCacheInfoForIntel();
-        return info;
+        getCacheInfoForIntel();
     }
     else if (vendor == AMD)
     {
-        info += getCacheInfoForAMD();
-        return info;
+        getCacheInfoForAMD();
     }
 }
 
@@ -65,17 +59,19 @@ string CacheInfo::getProcessorName()
     return string(cpuBrandString);
 }
 
-string CacheInfo::getCacheInfoForAMD() {
+void CacheInfo::getCacheInfoForAMD() 
+{
     DWORD bufferSize = 0;
     string cinfo;
+    //vector<string> str_info;
     GetLogicalProcessorInformation(nullptr, &bufferSize); // Получаем необходимый размер буфера
 
     SYSTEM_LOGICAL_PROCESSOR_INFORMATION* buffer = (SYSTEM_LOGICAL_PROCESSOR_INFORMATION*)malloc(bufferSize);
 
     if (buffer == nullptr) 
 {
-        cinfo = "Ошибка выделения памяти\n" ;
-        return cinfo;
+        cinfo = "Ошибка выделения памяти\n";
+        infoCache.push_back(cinfo);
     }
 
     if (GetLogicalProcessorInformation(buffer, &bufferSize)) 
@@ -130,11 +126,13 @@ string CacheInfo::getCacheInfoForAMD() {
             }
         }
         
-
+        int i = 0;
         // Выводим информацию
         for (const auto& entry : cacheInfo) {
             const string& type = entry.first;
             const Cache& info = entry.second;
+
+            cinfo = ""; // зануление строки
 
             cinfo += type + string(":\n")
                 + "  Тип: " + info.type + string("\n")
@@ -144,23 +142,26 @@ string CacheInfo::getCacheInfoForAMD() {
                 + "  Уровень путей: " + to_string(info.ways) + string("\n")
                 + "  Количество наборов: " + to_string(info.sets) + string("\n")
                 + string("\n\n"); // Пустая строка для разделения между кэшами
+            infoCache.push_back(cinfo);
         }
     }
     else {
         cinfo += "Ошибка получения информации: \n";
+        infoCache.push_back(cinfo);
     }
 
     free(buffer); // Освобождаем память
-    return cinfo;
 }
 
-string CacheInfo::getCacheInfoForIntel() {
+void CacheInfo::getCacheInfoForIntel() 
+{
     std::array<int, 4> cpuInfo; // Массив для хранения значений регистров EAX, EBX, ECX и EDX после вызова CPUID
     string info;
 
     // Цикл для обхода уровней кэша от L1 до L3, для каждого уровня запрашиваем CPUID с ECX = i
     for (int i = 0; i < 4; i++) 
     {
+        info = "";
 #if defined(_MSC_VER)
         // Если используется компилятор MSVC, то вызываем CPUID с помощью встроенной функции __cpuidex
         __cpuidex(cpuInfo.data(), 4, i);
@@ -208,9 +209,10 @@ string CacheInfo::getCacheInfoForIntel() {
         info += "  Размер строки кэша: " + to_string(cacheLineSize) + string(" байт") + '\n'; // Размер строки кэша в байтах
         info += "  Количество путей: " + to_string(cacheWays) +'\n';            // Количество путей (associativity)
         info += "  Количество наборов: " + to_string(cacheSets) + '\n';          // Количество наборов
-        info += "\n\n"; 
+        info += "\n\n";
+        infoCache.push_back(info);
     }
-    return info;
+    
 }
 
 

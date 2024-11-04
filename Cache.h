@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <vector>
 #include <intrin.h>
 #include <iostream>
 #include <map>
@@ -23,6 +24,21 @@ struct Cache {
     Cache() : count(0), sizeKB(0), lineSize(0), ways(0), sets(0), type("") {} // Конструктор по умолчанию
 };
 
+struct CPAndCacheInfo
+{
+    string vendor;
+    string model;
+
+    string L1_data;
+    string L1_code;
+
+    string L2;
+    string L3;
+
+
+    CPAndCacheInfo() = default;
+};
+
 class CacheInfo
 {
 public:
@@ -42,11 +58,16 @@ public:
     string getProcessorName();
 
     /// <summary>
-    /// Вывод информации о кэш-памяти
+    /// Получение информации о кэш-памяти
     /// </summary>
-    string getCacheInfo();
+    void getCacheInfo(bool CP = 1);
     
 private:
+
+    /// <summary>
+    /// Вектор значений кэша
+    /// </summary>
+    vector<string> infoCache;
 
     /// <summary>
     /// Производитель ЦП
@@ -61,12 +82,12 @@ private:
     /// <summary>
     /// Данные по кэш памяти процессоров Intel
     /// </summary>
-    string getCacheInfoForIntel();
+    void getCacheInfoForIntel();
 
     /// <summary>
     /// Данные по кэш памяти процессоров AMD
     /// </summary>
-    string getCacheInfoForAMD();
+    void getCacheInfoForAMD();
 
 };
 
