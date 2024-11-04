@@ -158,7 +158,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         /// Создаем шрифт
         HFONT hFont = CreateFontW(
-            16,                // Высота шрифта
+            14,                // Высота шрифта
             0,                 // Ширина шрифта (0 - автоматически)
             0,                 // Угол наклона
             0,                 // Угол наклона
