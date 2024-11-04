@@ -124,7 +124,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
     case WM_CREATE:
     {
-        SetWindowText(hWnd, L"Кэш-память процессора");
+        SetWindowText(hWnd, L"CPU Information");
         // Создание кнопки
         //HWND hButton = CreateWindow(
         //    L"BUTTON",  // Предопределенный класс кнопки
@@ -143,7 +143,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         HWND hEdit = CreateWindowExW(
             0,
             L"EDIT",
-            L"Информация о кэше",
+            L"CPU Information",
             WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT,
             1,
             1,
