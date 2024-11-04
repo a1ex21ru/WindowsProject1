@@ -60,7 +60,13 @@ public:
     /// <summary>
     /// Получение информации о кэш-памяти
     /// </summary>
-    void getCacheInfo(bool CP = 1);
+    void getCacheInfo();
+
+    /// <summary>
+    /// Геттер информации о кэш-памяти
+    /// </summary>
+    /// <returns></returns>
+    vector<string> getVector();
     
 private:
 

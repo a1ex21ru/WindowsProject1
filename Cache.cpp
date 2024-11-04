@@ -13,7 +13,7 @@ CacheInfo::~CacheInfo()
 {
 }
 
-void CacheInfo::getCacheInfo(bool CP = 1)
+void CacheInfo::getCacheInfo()
 {
     if (vendor == Intel)
     {
@@ -23,6 +23,11 @@ void CacheInfo::getCacheInfo(bool CP = 1)
     {
         getCacheInfoForAMD();
     }
+}
+
+vector<string> CacheInfo::getVector()
+{
+    return vector<string>(infoCache);
 }
 
 string CacheInfo::getProcessorVendor()

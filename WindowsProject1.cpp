@@ -22,6 +22,9 @@ INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
 CacheInfo proc;
 
+vector<string> info;
+
+
 int CALLBACK wWinMain(_In_ HINSTANCE hInstance,
     _In_opt_ HINSTANCE hPrevInstance,
     _In_ LPWSTR    lpCmdLine,
@@ -119,42 +122,99 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    // Получаем информацию о кэше
-    string cacheInfo = proc.getCacheInfo();
+
+    vector<HWND*> windowsForInfo;
+
     switch (message)
     {
     case WM_CREATE:
-    {
+    {    
+        // Получаем информацию о кэше
+        proc.getCacheInfo();
+        info = proc.getVector();
+
         SetWindowText(hWnd, L"Кэш-память процессора");
-        // Создание кнопки
-        //HWND hButton = CreateWindow(
-        //    L"BUTTON",  // Предопределенный класс кнопки
-        //    L"Получить информацию о кэше", // Текст кнопки
-        //    WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, // Стиль кнопки
-        //    50,         // Положение X
-        //    50,         // Положение Y
-        //    250,        // Ширина
-        //    30,         // Высота
-        //    hWnd,       // Родительское окно
-        //    NULL,       // Идентификатор кнопки
-        //    (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), // Дескриптор приложения
-        //    NULL        // Дополнительные параметры
-        //);
+
         // Создание текстового поля
-        HWND hEdit = CreateWindowExW(
+        HWND hEditL1D = CreateWindowExW(
             0,
             L"EDIT",
             L"CPU Information",
             WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT,
             1,
-            1,
-            350,
-            560,
+            50,
+            200,
+            100,
             hWnd,
             nullptr,
             hInst,
             nullptr
         );
+        windowsForInfo.push_back(&hEditL1D);
+
+        HWND hEditL1I = CreateWindowExW(
+            0,
+            L"EDIT",
+            L"CPU Information",
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT,
+            200,
+            50,
+            200,
+            100,
+            hWnd,
+            nullptr,
+            hInst,
+            nullptr
+        );
+        windowsForInfo.push_back(&hEditL1I);
+
+        HWND hEditL2 = CreateWindowExW(
+            0,
+            L"EDIT",
+            L"CPU Information",
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT,
+            1,
+            200,
+            200,
+            100,
+            hWnd,
+            nullptr,
+            hInst,
+            nullptr
+        );
+        windowsForInfo.push_back(&hEditL2);
+
+        HWND hEditL3 = CreateWindowExW(
+            0,
+            L"EDIT",
+            L"CPU Information",
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT,
+            200,
+            200,
+            200,
+            100,
+            hWnd,
+            nullptr,
+            hInst,
+            nullptr
+        );
+        windowsForInfo.push_back(&hEditL3);
+
+        HWND hEditName = CreateWindowExW(
+            0,
+            L"EDIT",
+            L"CPU Information",
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_CENTER,
+            100,
+            0,
+            300,
+            50,
+            hWnd,
+            nullptr,
+            hInst,
+            nullptr
+        );
+        windowsForInfo.push_back(&hEditName);
 
         /// Создаем шрифт
         HFONT hFont = CreateFontW(
@@ -174,12 +234,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             L"Consolas"        // Имя шрифта
         );
 
-        /// Устанавливаем текст в текстовое поле
-        std::string cacheWithR = ReplaceNewlines(cacheInfo);
-        SetWindowTextA(hEdit, cacheWithR.c_str());
+        // Информация о процессоре
+        std::string CP = proc.getProcessorVendor() + '\n' + proc.getProcessorName();
+        info.push_back(CP);
 
-        SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
-        
+        /// Устанавливаем текст в текстовое поле
+        std::string cacheWithR;
+        for (size_t i = 0; i < windowsForInfo.size(); i++)
+        {
+            cacheWithR = ReplaceNewlines(info[i]);
+            SetWindowTextA(*windowsForInfo[i], cacheWithR.c_str());
+
+            /// УСтановка шрифта
+            SendMessage(*windowsForInfo[i], WM_SETFONT, (WPARAM)hFont, TRUE);
+        }
+
     }
     break;
     case WM_COMMAND:
