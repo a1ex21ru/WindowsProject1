@@ -79,7 +79,8 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hInstance = hInstance;
     wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_WINDOWSPROJECT1));
     wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-    wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    HBRUSH hBrushLightGray = CreateSolidBrush(RGB(240, 240, 240));
+    wcex.hbrBackground = hBrushLightGray; // Установка кисти как фона
     wcex.lpszMenuName = MAKEINTRESOURCEW(IDC_WINDOWSPROJECT1);
     wcex.lpszClassName = szWindowClass;
     wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
@@ -92,6 +93,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 //   ЦЕЛЬ: Сохраняет маркер экземпляра и создает главное окно
 //
+
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     hInst = hInstance; // Сохранить маркер экземпляра в глобальной переменной
@@ -123,6 +125,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 
+
+
     vector<HWND*> windowsForInfo;
 
     switch (message)
@@ -140,7 +144,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             0,
             L"EDIT",
             L"CPU Information",
-            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_LEFT,
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_LEFT | ES_READONLY,
             1,
             50,
             200,
@@ -156,7 +160,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             0,
             L"EDIT",
             L"CPU Information",
-            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_LEFT,
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_LEFT | ES_READONLY,
             200,
             50,
             200,
@@ -172,7 +176,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             0,
             L"EDIT",
             L"CPU Information",
-            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_LEFT,
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_LEFT | ES_READONLY,
             1,
             200,
             200,
@@ -188,7 +192,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             0,
             L"EDIT",
             L"CPU Information",
-            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_LEFT,
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_LEFT | ES_READONLY,
             200,
             200,
             200,
@@ -204,7 +208,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             0,
             L"EDIT",
             L"CPU Information",
-            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_CENTER,
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_CENTER | ES_READONLY,
             100,
             0,
             300,
@@ -291,6 +295,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
+
     return 0;
 }
 
