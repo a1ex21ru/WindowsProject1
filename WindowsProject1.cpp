@@ -122,13 +122,17 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    static HBRUSH hBrushWhite;
 
-    vector<HWND*> windowsForInfo;
+    static vector<HWND*> windowsForInfo;
 
     switch (message)
     {
     case WM_CREATE:
     {    
+        // Создаем кисть для белого фона
+        hBrushWhite = CreateSolidBrush(RGB(255, 255, 255));
+
         // Получаем информацию о кэше
         proc.getCacheInfo();
         info = proc.getVector();
@@ -140,11 +144,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             0,
             L"EDIT",
             L"CPU Information",
-            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT,
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT | ES_READONLY,
             1,
             50,
-            200,
-            100,
+            220,
+            150,
             hWnd,
             nullptr,
             hInst,
@@ -156,11 +160,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             0,
             L"EDIT",
             L"CPU Information",
-            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT,
-            200,
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT | ES_READONLY,
+            220,
             50,
-            200,
-            100,
+            220,
+            150,
             hWnd,
             nullptr,
             hInst,
@@ -172,11 +176,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             0,
             L"EDIT",
             L"CPU Information",
-            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT,
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT | ES_READONLY,
             1,
             200,
-            200,
-            100,
+            220,
+            150,
             hWnd,
             nullptr,
             hInst,
@@ -188,11 +192,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             0,
             L"EDIT",
             L"CPU Information",
-            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT,
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT | ES_READONLY,
+            220,
             200,
-            200,
-            200,
-            100,
+            220,
+            150,
             hWnd,
             nullptr,
             hInst,
@@ -204,7 +208,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             0,
             L"EDIT",
             L"CPU Information",
-            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_CENTER,
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_CENTER | ES_READONLY,
             100,
             0,
             300,
@@ -230,7 +234,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             OUT_DEFAULT_PRECIS, // Прецизионный вывод
             CLIP_DEFAULT_PRECIS, // Обрезка
             DEFAULT_QUALITY,  // Качество
-            DEFAULT_QUALITY, // Высокое качество
+            PROOF_QUALITY, // Высокое качество
             L"Consolas"        // Имя шрифта
         );
 
@@ -264,13 +268,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             DestroyWindow(hWnd);
             break;
         default:
-
-             
-            // Отображаем информацию о кэше
-            //MessageBoxA(hWnd, cacheInfo.c_str(), "Информация о кэше", MB_OK);
             
             return DefWindowProc(hWnd, message, wParam, lParam);
         }
+    }
+    break;
+    case WM_CTLCOLOREDIT:
+    {
+        HDC hdcEdit = (HDC)wParam;
+        SetBkColor(hdcEdit, RGB(255, 255, 255));
+        return (LRESULT)hBrushWhite;
     }
     break;
     case WM_PAINT:
@@ -286,6 +293,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
     break;
     case WM_DESTROY:
+        DeleteObject(hBrushWhite);
         PostQuitMessage(0);
         break;
     default:

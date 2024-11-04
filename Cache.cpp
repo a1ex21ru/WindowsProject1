@@ -15,14 +15,7 @@ CacheInfo::~CacheInfo()
 
 void CacheInfo::getCacheInfo()
 {
-    if (vendor == Intel)
-    {
-        getCacheInfoForIntel();
-    }
-    else if (vendor == AMD)
-    {
-        getCacheInfoForAMD();
-    }
+    getCacheInfoForAMD();
 }
 
 vector<string> CacheInfo::getVector()
@@ -60,7 +53,6 @@ string CacheInfo::getProcessorName()
         __cpuid((int*)&cpuBrandString[16], 0x80000003);
         __cpuid((int*)&cpuBrandString[32], 0x80000004);
     }
-
     return string(cpuBrandString);
 }
 
@@ -131,7 +123,6 @@ void CacheInfo::getCacheInfoForAMD()
             }
         }
         
-        int i = 0;
         // Выводим информацию
         for (const auto& entry : cacheInfo) {
             const string& type = entry.first;
@@ -139,13 +130,13 @@ void CacheInfo::getCacheInfoForAMD()
 
             cinfo = ""; // зануление строки
 
-            cinfo += type + string(":\n")
-                + "  Тип: " + info.type + string("\n")
-                + "  Количество: " + to_string(info.count) + string("\n")
-                + "  Размер: " + to_string(info.sizeKB) + string(" KB\n")
-                + "  Размер строки: " + to_string(info.lineSize) + string(" Bytes\n")
-                + "  Уровень путей: " + to_string(info.ways) + string("\n")
-                + "  Количество наборов: " + to_string(info.sets) + string("\n")
+            cinfo += type + '\n'
+                + "  Тип: " + info.type + '\n'
+                + "  Количество разделов: " + to_string(info.count) + string("\n")
+                + "  Размер: " + to_string(info.sizeKB) + string(" КБ\n")
+                + "  Размер строки: " + to_string(info.lineSize) + string(" байт\n")
+                + "  Уровень путей: " + to_string(info.ways) + '\n'
+                + "  Количество наборов: " + to_string(info.sets) + '\n'
                 + string("\n\n"); // Пустая строка для разделения между кэшами
             infoCache.push_back(cinfo);
         }
@@ -209,17 +200,15 @@ void CacheInfo::getCacheInfoForIntel()
         
         // Выводим информацию о текущем уровне кэша
         info += "Уровень кэша: L" + to_string(cacheLevel) + '\n';             // Уровень кэша (L1, L2, L3)
-        info += "  Тип кэша: " + cacheTypeStr + '\n';                // Тип кэша (данные, инструкции или объединённый)
-        info += "  Размер кэша: " + to_string(cacheSize / 1024) + string(" КБ") + '\n'; // Размер кэша в килобайтах
-        info += "  Размер строки кэша: " + to_string(cacheLineSize) + string(" байт") + '\n'; // Размер строки кэша в байтах
-        info += "  Количество путей: " + to_string(cacheWays) +'\n';            // Количество путей (associativity)
+        info += "  Тип: " + cacheTypeStr + '\n';                             // Тип кэша (данные, инструкции или объединённый)
+        info += "  Количество разделов: " + to_string(cachePartitions) + '\n'; // Количество разделов (partitions)
+        info += "  Размер: " + to_string(cacheSize / 1024) + string(" КБ") + '\n'; // Размер кэша в килобайтах
+        info += "  Размер строки: " + to_string(cacheLineSize) + string(" байт") + '\n'; // Размер строки кэша в байтах
+        info += "  Количество путей: " + to_string(cacheWays) + '\n';            // Количество путей (associativity)
         info += "  Количество наборов: " + to_string(cacheSets) + '\n';          // Количество наборов
-        info += "\n\n";
         infoCache.push_back(info);
     }
-    
 }
-
 
 std::string ReplaceNewlines(const std::string& input)
 {
