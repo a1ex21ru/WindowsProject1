@@ -141,15 +141,75 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         //    NULL        // Дополнительные параметры
         //);
         // Создание текстового поля
-        HWND hEdit = CreateWindowExW(
+        HWND hEditL1D = CreateWindowExW(
             0,
             L"EDIT",
             L"CPU Information",
             WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT,
             1,
+            50,
+            200,
+            100,
+            hWnd,
+            nullptr,
+            hInst,
+            nullptr
+        );
+
+        HWND hEditL1I = CreateWindowExW(
+            0,
+            L"EDIT",
+            L"CPU Information",
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT,
+            200,
+            50,
+            200,
+            100,
+            hWnd,
+            nullptr,
+            hInst,
+            nullptr
+        );
+
+        HWND hEditL2 = CreateWindowExW(
+            0,
+            L"EDIT",
+            L"CPU Information",
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT,
             1,
-            350,
-            560,
+            200,
+            200,
+            100,
+            hWnd,
+            nullptr,
+            hInst,
+            nullptr
+        );
+
+        HWND hEditL3 = CreateWindowExW(
+            0,
+            L"EDIT",
+            L"CPU Information",
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT,
+            200,
+            200,
+            200,
+            100,
+            hWnd,
+            nullptr,
+            hInst,
+            nullptr
+        );
+
+        HWND hEditName = CreateWindowExW(
+            0,
+            L"EDIT",
+            L"CPU Information",
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_CENTER,
+            100,
+            0,
+            300,
+            50,
             hWnd,
             nullptr,
             hInst,
@@ -176,9 +236,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         /// Устанавливаем текст в текстовое поле
         std::string cacheWithR = ReplaceNewlines(cacheInfo);
-        SetWindowTextA(hEdit, cacheWithR.c_str());
+        SetWindowTextA(hEditName, cacheWithR.c_str());
 
-        SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
+        SendMessage(hEditName, WM_SETFONT, (WPARAM)hFont, TRUE);
         
     }
     break;

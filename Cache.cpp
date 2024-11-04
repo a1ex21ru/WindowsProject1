@@ -16,8 +16,8 @@ CacheInfo::~CacheInfo()
 string CacheInfo::getCacheInfo()
 {
     string info;
-    info = "Производитель ЦП : " + vendor + '\n';
-    info += "Название ЦП : " + model + "\n\n";
+    //info = "Производитель ЦП : " + vendor + '\n';
+    //info += "Название ЦП : " + model + "\n\n";
 
     if (vendor == Intel)
     {
