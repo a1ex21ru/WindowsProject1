@@ -125,8 +125,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 
-
-
     vector<HWND*> windowsForInfo;
 
     switch (message)
@@ -137,7 +135,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         proc.getCacheInfo();
         info = proc.getVector();
 
-        SetWindowText(hWnd, L"Кэш-память процессора");
+        SetWindowText(hWnd, L"CPU Information");
 
         // Создание текстового поля
         HWND hEditL1D = CreateWindowExW(
