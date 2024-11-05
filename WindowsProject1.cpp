@@ -79,7 +79,8 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hInstance = hInstance;
     wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_WINDOWSPROJECT1));
     wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-    wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    HBRUSH hBrushLightGray = CreateSolidBrush(RGB(240, 240, 240));
+    wcex.hbrBackground = hBrushLightGray; // Установка кисти как фона
     wcex.lpszMenuName = MAKEINTRESOURCEW(IDC_WINDOWSPROJECT1);
     wcex.lpszClassName = szWindowClass;
     wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
@@ -92,16 +93,26 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 //   ЦЕЛЬ: Сохраняет маркер экземпляра и создает главное окно
 //
+
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     hInst = hInstance; // Сохранить маркер экземпляра в глобальной переменной
+    int windowWidth = 500;
+    int windowHeight = 500;
 
+    // Получите размеры экрана
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+    // Вычислите координаты для центрирования окна
+    int x = (screenWidth - windowWidth) / 2;
+    int y = (screenHeight - windowHeight) / 2;
     /// Создание окна
     HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-        483,
-        43,
-        500,
-        500,
+        x,
+        y,
+        windowWidth,
+        windowHeight,
         nullptr, nullptr, hInstance, nullptr);
     
     if (!hWnd)
@@ -137,14 +148,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         proc.getCacheInfo();
         info = proc.getVector();
 
-        SetWindowText(hWnd, L"Кэш-память процессора");
+        SetWindowText(hWnd, L"CPU Information");
 
         // Создание текстового поля
         HWND hEditL1D = CreateWindowExW(
             0,
             L"EDIT",
             L"CPU Information",
-            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT | ES_READONLY,
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_LEFT | ES_READONLY,
             1,
             50,
             220,
@@ -160,8 +171,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             0,
             L"EDIT",
             L"CPU Information",
-            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT | ES_READONLY,
-            220,
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_LEFT | ES_READONLY,
+            200,
             50,
             220,
             150,
@@ -176,7 +187,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             0,
             L"EDIT",
             L"CPU Information",
-            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT | ES_READONLY,
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_LEFT | ES_READONLY,
             1,
             200,
             220,
@@ -192,8 +203,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             0,
             L"EDIT",
             L"CPU Information",
-            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_LEFT | ES_READONLY,
-            220,
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_LEFT | ES_READONLY,
+            200,
+            200,
             200,
             220,
             150,
@@ -208,7 +220,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             0,
             L"EDIT",
             L"CPU Information",
-            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_CENTER | ES_READONLY,
+            WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_CENTER | ES_READONLY,
             100,
             0,
             300,
@@ -252,9 +264,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             /// УСтановка шрифта
             SendMessage(*windowsForInfo[i], WM_SETFONT, (WPARAM)hFont, TRUE);
         }
-
+        /*EnableWindow(hEditName, FALSE);*/
     }
     break;
+    
     case WM_COMMAND:
     {
         int wmId = LOWORD(wParam);
@@ -299,6 +312,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
+
     return 0;
 }
 
