@@ -203,7 +203,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             200,
             200,
             200,
-            150,
+            100,
             hWnd,
             nullptr,
             hInst,
