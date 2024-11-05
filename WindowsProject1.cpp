@@ -97,13 +97,22 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     hInst = hInstance; // Сохранить маркер экземпляра в глобальной переменной
+    int windowWidth = 500;
+    int windowHeight = 500;
 
+    // Получите размеры экрана
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+    // Вычислите координаты для центрирования окна
+    int x = (screenWidth - windowWidth) / 2;
+    int y = (screenHeight - windowHeight) / 2;
     /// Создание окна
     HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-        483,
-        43,
-        500,
-        500,
+        x,
+        y,
+        windowWidth,
+        windowHeight,
         nullptr, nullptr, hInstance, nullptr);
     
     if (!hWnd)
@@ -194,7 +203,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             200,
             200,
             200,
-            100,
+            150,
             hWnd,
             nullptr,
             hInst,
@@ -250,9 +259,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             /// УСтановка шрифта
             SendMessage(*windowsForInfo[i], WM_SETFONT, (WPARAM)hFont, TRUE);
         }
-
+        /*EnableWindow(hEditName, FALSE);*/
     }
     break;
+    
     case WM_COMMAND:
     {
         int wmId = LOWORD(wParam);
