@@ -135,7 +135,7 @@ void CacheInfo::getCacheInfoForAMD()
                 + "  Количество разделов: " + to_string(info.count) + string("\n")
                 + "  Размер: " + to_string(info.sizeKB) + string(" КБ\n")
                 + "  Размер строки: " + to_string(info.lineSize) + string(" байт\n")
-                + "  Уровень путей: " + to_string(info.ways) + '\n'
+                + "  Количество путей: " + to_string(info.ways) + '\n'
                 + "  Количество наборов: " + to_string(info.sets) + '\n'
                 + string("\n\n"); // Пустая строка для разделения между кэшами
             infoCache.push_back(cinfo);

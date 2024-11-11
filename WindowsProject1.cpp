@@ -98,7 +98,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     hInst = hInstance; // Сохранить маркер экземпляра в глобальной переменной
     int windowWidth = 500;
-    int windowHeight = 500;
+    int windowHeight = 400;
 
     // Получите размеры экрана
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
@@ -108,6 +108,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     int x = (screenWidth - windowWidth) / 2;
     int y = (screenHeight - windowHeight) / 2;
     /// Создание окна
+
     HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
         x,
         y,
@@ -150,16 +151,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         SetWindowText(hWnd, L"CPU Information");
 
-        // Создание текстового поля
+        // размеры клиентской области окна
+        RECT clientRect;
+        GetClientRect(hWnd, &clientRect);
+        int clientWidth = clientRect.right - clientRect.left;
+        int clientHeight = clientRect.bottom - clientRect.top;
+
+        // Пропорционально задаем размеры и позиции полей редактирования
+        int editWidth = clientWidth / 2 - 10; // Ширина каждого поля
+        int editHeight = 150; // Высота полей
+        int margin = 10; // Отступ между полями
+
+        // Создаем поля редактирования с учетом размеров окна
         HWND hEditL1D = CreateWindowExW(
             0,
             L"EDIT",
             L"CPU Information",
             WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_LEFT | ES_READONLY,
-            1,
+            margin * 2,
             50,
-            220,
-            150,
+            editWidth,
+            editHeight,
             hWnd,
             nullptr,
             hInst,
@@ -172,10 +184,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             L"EDIT",
             L"CPU Information",
             WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_LEFT | ES_READONLY,
-            270,
+            editWidth + margin,
             50,
-            220,
-            150,
+            editWidth,
+            editHeight,
             hWnd,
             nullptr,
             hInst,
@@ -188,10 +200,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             L"EDIT",
             L"CPU Information",
             WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_LEFT | ES_READONLY,
-            1,
+            margin * 2,
             200,
-            220,
-            150,
+            editWidth,
+            editHeight,
             hWnd,
             nullptr,
             hInst,
@@ -204,10 +216,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             L"EDIT",
             L"CPU Information",
             WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_LEFT | ES_READONLY,
-            270,
+            editWidth + margin,
             200,
-            200,
-            150,
+            editWidth,
+            editHeight,
             hWnd,
             nullptr,
             hInst,
@@ -220,7 +232,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             L"EDIT",
             L"CPU Information",
             WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_CENTER | ES_READONLY,
-            100,
+            (clientWidth - 300) / 2, // Центрируем поле
             0,
             300,
             50,
@@ -250,11 +262,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         );
 
         // Информация о процессоре
-        std::string CP = proc.getProcessorVendor() + '\n' + proc.getProcessorName();
+        string CP = proc.getProcessorVendor() + '\n' + proc.getProcessorName();
         info.push_back(CP);
 
         /// Устанавливаем текст в текстовое поле
-        std::string cacheWithR;
+        string cacheWithR;
         for (size_t i = 0; i < windowsForInfo.size(); i++)
         {
             cacheWithR = ReplaceNewlines(info[i]);
@@ -263,7 +275,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             /// УСтановка шрифта
             SendMessage(*windowsForInfo[i], WM_SETFONT, (WPARAM)hFont, TRUE);
         }
-        /*EnableWindow(hEditName, FALSE);*/
+
     }
     break;
     
@@ -296,11 +308,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hWnd, &ps);
-        //HDC hdc = GetDC(hWnd);
-        //string cacheInfo = proc.getCacheInfo();
-        //TextOutA(hdc, 100, 10, cacheInfo.c_str(), cacheInfo.length());
+        
         ReleaseDC(hWnd, hdc);
-        // TODO: Добавьте сюда любой код прорисовки, использующий HDC...
+
         EndPaint(hWnd, &ps);
     }
     break;
