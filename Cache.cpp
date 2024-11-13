@@ -29,7 +29,7 @@ string CacheInfo::getProcessorVendor()
     __cpuid(cpuInfo, 0); // Получаем информацию о производителе процессора
 
     // Извлекаем производителя из регистра EBX, EDX, ECX
-    char vendor[13];
+    char vendor[13]{};
     *((int*)&vendor[0]) = cpuInfo[1]; // EBX
     *((int*)&vendor[4]) = cpuInfo[3]; // EDX
     *((int*)&vendor[8]) = cpuInfo[2]; // ECX
@@ -40,7 +40,7 @@ string CacheInfo::getProcessorVendor()
 
 string CacheInfo::getProcessorName()
 {
-    array<int, 4> cpuInfo;
+    array<int, 4> cpuInfo{};
     char cpuBrandString[48] = { 0 }; // Буфер для названия процессора, размер 48 байт
 
     // Получаем информацию о производителе
@@ -59,14 +59,14 @@ string CacheInfo::getProcessorName()
 void CacheInfo::getCacheInfoForAMD() 
 {
     DWORD bufferSize = 0;
-    string cinfo;
-    //vector<string> str_info;
+    string cinfo, bytes[4];    
+    short k = 0, s = 0;
     GetLogicalProcessorInformation(nullptr, &bufferSize); // Получаем необходимый размер буфера
 
     SYSTEM_LOGICAL_PROCESSOR_INFORMATION* buffer = (SYSTEM_LOGICAL_PROCESSOR_INFORMATION*)malloc(bufferSize);
 
     if (buffer == nullptr) 
-{
+    {
         cinfo = "Ошибка выделения памяти\n";
         infoCache.push_back(cinfo);
     }
@@ -76,15 +76,18 @@ void CacheInfo::getCacheInfoForAMD()
         // Словарь для хранения информации о кэшах
         map<string, Cache> cacheInfo;
 
-        for (DWORD i = 0; i < bufferSize / sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION); ++i) {
-            if (buffer[i].Relationship == RelationCache) {
+        for (DWORD i = 0; i < bufferSize / sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION); ++i) 
+        {
+            if (buffer[i].Relationship == RelationCache) 
+            {
                 string cacheType;
                 int lineSize = buffer[i].Cache.LineSize; // Размер строки кэша
                 int cacheSizeKB = buffer[i].Cache.Size / 1024; // Размер кэша в КБ
-                int ways = (buffer[i].Cache.Type == CacheUnified) ? 8 : 4; // Примерное значение для уровня путей
+                int ways = buffer[i].Cache.Associativity;
                 int sets = (cacheSizeKB * 1024) / (lineSize * ways); // Количество наборов
 
-                switch (buffer[i].Cache.Level) {
+                switch (buffer[i].Cache.Level) 
+                {
                 case 1:
                     if (buffer[i].Cache.Type == CacheData) {
                         cacheType = "Уровень кэша: L1";
@@ -101,7 +104,8 @@ void CacheInfo::getCacheInfoForAMD()
                     break;
                 }
 
-                if (!cacheType.empty()) {
+                if (!cacheType.empty())
+                {
                     auto& info = cacheInfo[cacheType];
                     info.count++; // Увеличиваем количество
                     info.sizeKB = cacheSizeKB; // Записываем размер
@@ -114,7 +118,7 @@ void CacheInfo::getCacheInfoForAMD()
                         info.type = "Кэш данных";
                     }
                     else if (buffer[i].Cache.Type == CacheInstruction) {
-                        info.type = "Кэш инструкций ";
+                        info.type = "Кэш инструкций";
                     }
                     else {
                         info.type = "Объединённый кэш";
@@ -122,22 +126,26 @@ void CacheInfo::getCacheInfoForAMD()
                 }
             }
         }
-        
+
         // Выводим информацию
-        for (const auto& entry : cacheInfo) {
+        for (const auto& entry : cacheInfo) 
+        {
             const string& type = entry.first;
             const Cache& info = entry.second;
+
+            bytes[k] = (info.sizeKB / 1024) > 0 ? " Мбайт\n" : " Кбайт\n";
+            s = (info.sizeKB / 1024) > 0 ? (info.sizeKB / 1024) : info.sizeKB;
 
             cinfo = ""; // зануление строки
 
             cinfo += type + '\n'
                 + "  Тип: " + info.type + '\n'
-                + "  Количество разделов: " + to_string(info.count) + string("\n")
-                + "  Размер: " + to_string(info.sizeKB) + string(" КБ\n")
-                + "  Размер строки: " + to_string(info.lineSize) + string(" байт\n")
+                + "  Размер: " + to_string(s) + bytes[k++]
+                + "  Размер строки: " + to_string(info.lineSize) + string(" байта\n")
                 + "  Количество путей: " + to_string(info.ways) + '\n'
                 + "  Количество наборов: " + to_string(info.sets) + '\n'
-                + string("\n\n"); // Пустая строка для разделения между кэшами
+                + "  Количество разделов: " + to_string(info.count) + '\n';
+            
             infoCache.push_back(cinfo);
         }
     }
@@ -158,20 +166,9 @@ void CacheInfo::getCacheInfoForIntel()
     for (int i = 0; i < 4; i++) 
     {
         info = "";
-#if defined(_MSC_VER)
-        // Если используется компилятор MSVC, то вызываем CPUID с помощью встроенной функции __cpuidex
+
+        // Вызываем CPUID с помощью встроенной функции __cpuidex
         __cpuidex(cpuInfo.data(), 4, i);
-#else
-        // Для других компиляторов используем ассемблерные вставки для вызова CPUID
-        asm volatile (
-            "cpuid"                            // Инструкция cpuid заполняет регистры данными
-            : "=a" (cpuInfo[0]),               // Значение EAX сохранено в cpuInfo[0]
-            "=b" (cpuInfo[1]),               // Значение EBX сохранено в cpuInfo[1]
-            "=c" (cpuInfo[2]),               // Значение ECX сохранено в cpuInfo[2]
-            "=d" (cpuInfo[3])                // Значение EDX сохранено в cpuInfo[3]
-            : "a" (4), "c" (i)                 // Устанавливаем EAX = 4 для информации о кэше, ECX = i (уровень кэша)
-            );
-#endif
 
         // Если младшие 5 бит EAX равны 0, это значит, что уровней кэша больше нет, прерываем цикл
         if ((cpuInfo[0] & 0x1F) == 0) {
@@ -182,7 +179,7 @@ void CacheInfo::getCacheInfoForIntel()
         int cacheType = cpuInfo[0] & 0x1F;                  // Тип кэша (данные, инструкции или объединённый) из младших 5 битов EAX
         int cacheLevel = (cpuInfo[0] >> 5) & 0x7;           // Уровень кэша (L1, L2, L3), биты 5-7 в EAX
         int cacheLineSize = (cpuInfo[1] & 0xFFF) + 1;       // Размер строки кэша (в байтах) из битов 0-11 в EBX
-        int cachePartitions = ((cpuInfo[1] >> 12) & 0x3FF) + 1; // Количество разделов (partitions) из битов 12-21 в EBX
+        int cachePartitions = ((cpuInfo[1] >> 0xC) & 0x15) + 1; // Количество разделов (partitions) из битов 12-21 в EBX
         int cacheWays = ((cpuInfo[1] >> 22) & 0x3FF) + 1;   // Количество путей (associativity) из битов 22-31 в EBX
         int cacheSets = cpuInfo[2] + 1;                     // Количество наборов (sets) из значения ECX
 

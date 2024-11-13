@@ -166,7 +166,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         HWND hEditL1D = CreateWindowExW(
             0,
             L"EDIT",
-            L"CPU Information",
+            L"CPU Information1D",
             WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_LEFT | ES_READONLY,
             margin * 2,
             50,
@@ -182,7 +182,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         HWND hEditL1I = CreateWindowExW(
             0,
             L"EDIT",
-            L"CPU Information",
+            L"CPU Information1I",
             WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_LEFT | ES_READONLY,
             editWidth + margin,
             50,
@@ -198,7 +198,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         HWND hEditL2 = CreateWindowExW(
             0,
             L"EDIT",
-            L"CPU Information",
+            L"CPU Information2",
             WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_LEFT | ES_READONLY,
             margin * 2,
             200,
@@ -214,7 +214,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         HWND hEditL3 = CreateWindowExW(
             0,
             L"EDIT",
-            L"CPU Information",
+            L"CPU Information3",
             WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_LEFT | ES_READONLY,
             editWidth + margin,
             200,
@@ -230,7 +230,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         HWND hEditName = CreateWindowExW(
             0,
             L"EDIT",
-            L"CPU Information",
+            L"CPU InformationH",
             WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_CENTER | ES_READONLY,
             (clientWidth - 300) / 2, // Центрируем поле
             0,
@@ -249,11 +249,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             0,                 // Ширина шрифта (0 - автоматически)
             0,                 // Угол наклона
             0,                 // Угол наклона
-            FW_MEDIUM,          // Толщина шрифта (FW_BOLD - жирный)
-            FALSE,            // Курсив
-            FALSE,            // Подчеркивание
-            FALSE,            // Зачеркивание
-            DEFAULT_CHARSET,  // Набор символов
+            FW_MEDIUM,         // Толщина шрифта (FW_BOLD - жирный)
+            FALSE,             // Курсив
+            FALSE,             // Подчеркивание
+            FALSE,             // Зачеркивание
+            DEFAULT_CHARSET,   // Набор символов
             OUT_DEFAULT_PRECIS, // Прецизионный вывод
             CLIP_DEFAULT_PRECIS, // Обрезка
             DEFAULT_QUALITY,  // Качество
